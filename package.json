@@ -4,6 +4,10 @@
   "description": "Visualize and manipulate XML data with interactive tables and charts",
   "version": "0.0.1",
   "publisher": "xml-data-explorer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/xml-data-explorer/xml-data-explorer-v2.git"
+  },
   "engines": {
     "vscode": "^1.100.0"
   },
@@ -11,7 +15,8 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguage:xml"
+    "onLanguage:xml",
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -121,6 +126,7 @@
     "@typescript-eslint/parser": "^8.31.1",
     "@vscode/test-cli": "^0.0.11",
     "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.6.0",
     "eslint": "^9.25.1",
     "typescript": "^5.8.3"
   },
