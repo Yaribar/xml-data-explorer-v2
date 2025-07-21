@@ -60,6 +60,11 @@
         "command": "xmlDataExplorer.copyXPath",
         "title": "Copy XPath",
         "category": "XML Data Explorer"
+      },
+      {
+        "command": "xmlDataExplorer.testViewData",
+        "title": "Test View Data",
+        "category": "XML Data Explorer"
       }
     ],
     "menus": {
@@ -84,20 +89,26 @@
           "group": "navigation"
         }
       ],
+      "commandPalette": [
+        {
+          "command": "xmlDataExplorer.viewData",
+          "when": "view == xmlExplorer.elements"
+        }
+      ],
       "view/item/context": [
         {
           "command": "xmlDataExplorer.viewData",
-          "when": "view == xmlExplorer.elements",
+          "when": "view == xmlExplorer.elements && viewItem == xmlElement",
           "group": "inline"
         },
         {
           "command": "xmlDataExplorer.copyData",
-          "when": "view == xmlExplorer.elements",
+          "when": "view == xmlExplorer.elements && viewItem == xmlElement",
           "group": "inline"
         },
         {
           "command": "xmlDataExplorer.copyXPath",
-          "when": "view == xmlExplorer.elements",
+          "when": "view == xmlExplorer.elements && viewItem == xmlElement",
           "group": "inline"
         }
       ]

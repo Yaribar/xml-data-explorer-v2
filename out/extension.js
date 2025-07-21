@@ -51,6 +51,33 @@ function activate(context) {
             vscode.window.showInformationMessage("XPath copied to clipboard");
         }
     });
+    const testViewData = vscode.commands.registerCommand("xmlDataExplorer.testViewData", async () => {
+        const activeEditor = vscode.window.activeTextEditor;
+        if (activeEditor && activeEditor.document.languageId === 'xml') {
+            try {
+                // Get the current XML file content and create a real element
+                const content = activeEditor.document.getText();
+                const fs = require('fs');
+                const { DOMParser } = require('xmldom');
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(content, 'text/xml');
+                const root = doc.documentElement;
+                if (root) {
+                    const realElement = new XmlElementsProvider_1.XmlElementItem(root.tagName, vscode.TreeItemCollapsibleState.None, root, `/${root.tagName}`, activeEditor.document.fileName);
+                    await openDataView(context, realElement);
+                }
+                else {
+                    vscode.window.showErrorMessage("Could not parse XML file");
+                }
+            }
+            catch (error) {
+                vscode.window.showErrorMessage(`Error: ${error}`);
+            }
+        }
+        else {
+            vscode.window.showErrorMessage("No XML file is currently active");
+        }
+    });
     // Register file selection handler
     const fileSelectionHandler = vscode.commands.registerCommand('xmlExplorer.files.selectFile', async (fileItem) => {
         if (fileItem) {
@@ -73,7 +100,7 @@ function activate(context) {
         }
     });
     // Add subscriptions
-    context.subscriptions.push(openExplorer, viewData, copyData, copyXPath, fileSelectionHandler, editorChangeListener, xmlFilesTreeView, xmlElementsTreeView);
+    context.subscriptions.push(openExplorer, viewData, copyData, copyXPath, testViewData, fileSelectionHandler, editorChangeListener, xmlFilesTreeView, xmlElementsTreeView);
 }
 function getActiveXmlFilePath() {
     const activeEditor = vscode.window.activeTextEditor;

@@ -129,6 +129,8 @@ export class DataViewPanel {
             border: 1px solid var(--vscode-panel-border);
             padding: 8px;
             text-align: left;
+            background-color: var(--vscode-editor-background);
+            color: var(--vscode-editor-foreground);
         }
         th {
             background-color: var(--vscode-panel-background);
@@ -136,7 +138,8 @@ export class DataViewPanel {
             top: 0;
         }
         .editable {
-            background-color: var(--vscode-input-background);
+            background-color: var(--vscode-editor-background);
+            color: var(--vscode-editor-foreground);
             border: 1px solid var(--vscode-input-border);
             padding: 4px;
             width: 100%;
