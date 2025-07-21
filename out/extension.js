@@ -5,6 +5,7 @@ exports.deactivate = deactivate;
 const vscode = require("vscode");
 const XmlFilesProvider_1 = require("./providers/XmlFilesProvider");
 const XmlElementsProvider_1 = require("./providers/XmlElementsProvider");
+const DataViewPanel_1 = require("./webview/DataViewPanel");
 function activate(context) {
     console.log("XML Data Explorer v2 is now active!");
     vscode.window.showInformationMessage("XML Data Explorer v2 is now active!");
@@ -34,7 +35,7 @@ function activate(context) {
     });
     const viewData = vscode.commands.registerCommand("xmlDataExplorer.viewData", async (element) => {
         if (element) {
-            await openDataView(element);
+            await openDataView(context, element);
         }
     });
     const copyData = vscode.commands.registerCommand("xmlDataExplorer.copyData", async (element) => {
@@ -90,9 +91,8 @@ async function loadXmlFile(filePath) {
         vscode.window.showErrorMessage(`Error loading XML file: ${error}`);
     }
 }
-async function openDataView(element) {
-    // TODO: Implement webview panel for data visualization
-    vscode.window.showInformationMessage(`Opening data view for: ${element.label}`);
+async function openDataView(context, element) {
+    DataViewPanel_1.DataViewPanel.createOrShow(context.extensionUri, element);
 }
 function getElementData(element) {
     // TODO: Implement proper data extraction

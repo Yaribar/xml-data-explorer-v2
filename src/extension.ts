@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 import { XmlFilesProvider, XmlFileItem } from "./providers/XmlFilesProvider";
 import { XmlElementsProvider, XmlElementItem } from "./providers/XmlElementsProvider";
+import { DataViewPanel } from "./webview/DataViewPanel";
 
 export function activate(context: vscode.ExtensionContext) {
     console.log("XML Data Explorer v2 is now active!");
@@ -35,7 +36,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     const viewData = vscode.commands.registerCommand("xmlDataExplorer.viewData", async (element: XmlElementItem) => {
         if (element) {
-            await openDataView(element);
+            await openDataView(context, element);
         }
     });
 
@@ -106,9 +107,8 @@ async function loadXmlFile(filePath: string): Promise<void> {
     }
 }
 
-async function openDataView(element: XmlElementItem): Promise<void> {
-    // TODO: Implement webview panel for data visualization
-    vscode.window.showInformationMessage(`Opening data view for: ${element.label}`);
+async function openDataView(context: vscode.ExtensionContext, element: XmlElementItem): Promise<void> {
+    DataViewPanel.createOrShow(context.extensionUri, element);
 }
 
 function getElementData(element: any): string {
