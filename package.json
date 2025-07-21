@@ -15,8 +15,7 @@
     "Other"
   ],
   "activationEvents": [
-    "onLanguage:xml",
-    "onStartupFinished"
+    "*"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -25,7 +24,7 @@
         {
           "id": "xml-explorer",
           "title": "XML Explorer",
-          "icon": "$(file-code)"
+          "icon": "$(database)"
         }
       ]
     },
