@@ -24,6 +24,9 @@ function activate(context) {
         if (xmlPath) {
             await loadXmlFile(xmlPath);
             xmlElementsProvider.setXmlFile(xmlPath);
+            // Open the file in editor to make it active
+            const document = await vscode.workspace.openTextDocument(xmlPath);
+            await vscode.window.showTextDocument(document);
         }
         else {
             vscode.window.showErrorMessage("No XML file selected or open");
@@ -50,10 +53,16 @@ function activate(context) {
     // Register file selection handler
     const fileSelectionHandler = vscode.commands.registerCommand('xmlExplorer.files.selectFile', async (fileItem) => {
         if (fileItem) {
-            xmlElementsProvider.setXmlFile(fileItem.filePath);
-            // Open the file in editor
-            const document = await vscode.workspace.openTextDocument(fileItem.filePath);
-            await vscode.window.showTextDocument(document);
+            try {
+                xmlElementsProvider.setXmlFile(fileItem.filePath);
+                // Open the file in editor
+                const document = await vscode.workspace.openTextDocument(fileItem.filePath);
+                await vscode.window.showTextDocument(document);
+                vscode.window.showInformationMessage(`Switched to: ${fileItem.label}`);
+            }
+            catch (error) {
+                vscode.window.showErrorMessage(`Error opening file: ${error}`);
+            }
         }
     });
     // Subscribe to editor changes to update elements view

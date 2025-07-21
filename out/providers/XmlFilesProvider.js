@@ -13,6 +13,11 @@ class XmlFileItem extends vscode.TreeItem {
         this.description = path.basename(filePath);
         this.iconPath = new vscode.ThemeIcon('file-code');
         this.contextValue = 'xmlFile';
+        this.command = {
+            command: 'xmlExplorer.files.selectFile',
+            title: 'Open XML File',
+            arguments: [this]
+        };
     }
 }
 exports.XmlFileItem = XmlFileItem;
