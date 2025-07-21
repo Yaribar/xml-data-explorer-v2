@@ -24,7 +24,7 @@
         {
           "id": "xml-explorer",
           "title": "XML Explorer",
-          "icon": "$(database)"
+          "icon": "$(symbol-class)"
         }
       ]
     },
@@ -32,13 +32,11 @@
       "xml-explorer": [
         {
           "id": "xmlExplorer.files",
-          "name": "XML Files",
-          "when": "workspaceHasXmlFiles"
+          "name": "XML Files"
         },
         {
           "id": "xmlExplorer.elements",
-          "name": "Elements",
-          "when": "xmlFileActive"
+          "name": "Elements"
         }
       ]
     },

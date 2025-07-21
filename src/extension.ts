@@ -4,6 +4,7 @@ import { XmlElementsProvider, XmlElementItem } from "./providers/XmlElementsProv
 
 export function activate(context: vscode.ExtensionContext) {
     console.log("XML Data Explorer v2 is now active!");
+    vscode.window.showInformationMessage("XML Data Explorer v2 is now active!");
 
     // Create tree data providers
     const xmlFilesProvider = new XmlFilesProvider();

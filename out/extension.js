@@ -7,6 +7,7 @@ const XmlFilesProvider_1 = require("./providers/XmlFilesProvider");
 const XmlElementsProvider_1 = require("./providers/XmlElementsProvider");
 function activate(context) {
     console.log("XML Data Explorer v2 is now active!");
+    vscode.window.showInformationMessage("XML Data Explorer v2 is now active!");
     // Create tree data providers
     const xmlFilesProvider = new XmlFilesProvider_1.XmlFilesProvider();
     const xmlElementsProvider = new XmlElementsProvider_1.XmlElementsProvider();
