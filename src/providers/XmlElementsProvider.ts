@@ -103,12 +103,23 @@ export class XmlElementsProvider implements vscode.TreeDataProvider<XmlElementIt
         const children: XmlElementItem[] = [];
         const element = parentElement.element;
 
+        // Count occurrences of each tag name to create proper XPath indices
+        const tagCounts: { [key: string]: number } = {};
+
         for (let i = 0; i < element.childNodes.length; i++) {
             const child = element.childNodes[i];
             
             if (child.nodeType === 1) { // Element node
                 const childElement = child as Element;
-                const childXPath = `${parentElement.xpath}/${childElement.tagName}`;
+                const tagName = childElement.tagName;
+                
+                // Count this tag name
+                tagCounts[tagName] = (tagCounts[tagName] || 0) + 1;
+                
+                // Create XPath with index for multiple elements with same name
+                const childXPath = tagCounts[tagName] > 1 
+                    ? `${parentElement.xpath}/${tagName}[${tagCounts[tagName]}]`
+                    : `${parentElement.xpath}/${tagName}`;
                 
                 const childItem = new XmlElementItem(
                     childElement.tagName,
