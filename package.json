@@ -11,10 +11,48 @@
   "activationEvents": ["onLanguage:xml"],
   "main": "./out/extension.js",
   "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "xml-explorer",
+          "title": "XML Explorer",
+          "icon": "$(file-code)"
+        }
+      ]
+    },
+    "views": {
+      "xml-explorer": [
+        {
+          "id": "xmlExplorer.files",
+          "name": "XML Files",
+          "when": "workspaceHasXmlFiles"
+        },
+        {
+          "id": "xmlExplorer.elements",
+          "name": "Elements",
+          "when": "xmlFileActive"
+        }
+      ]
+    },
     "commands": [
       {
         "command": "xmlDataExplorer.openExplorer",
         "title": "Open XML Data Explorer",
+        "category": "XML Data Explorer"
+      },
+      {
+        "command": "xmlDataExplorer.viewData",
+        "title": "View Data",
+        "category": "XML Data Explorer"
+      },
+      {
+        "command": "xmlDataExplorer.copyData",
+        "title": "Copy Data",
+        "category": "XML Data Explorer"
+      },
+      {
+        "command": "xmlDataExplorer.copyXPath",
+        "title": "Copy XPath",
         "category": "XML Data Explorer"
       }
     ],
@@ -32,7 +70,35 @@
           "when": "editorLangId == xml",
           "group": "navigation"
         }
+      ],
+      "view/title": [
+        {
+          "command": "xmlDataExplorer.openExplorer",
+          "when": "view == xmlExplorer.files",
+          "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "xmlDataExplorer.viewData",
+          "when": "view == xmlExplorer.elements",
+          "group": "inline"
+        },
+        {
+          "command": "xmlDataExplorer.copyData",
+          "when": "view == xmlExplorer.elements",
+          "group": "inline"
+        },
+        {
+          "command": "xmlDataExplorer.copyXPath",
+          "when": "view == xmlExplorer.elements",
+          "group": "inline"
+        }
       ]
+    },
+    "when": {
+      "workspaceHasXmlFiles": "workspaceHas:*.xml",
+      "xmlFileActive": "editorLangId == xml"
     }
   },
   "scripts": {
