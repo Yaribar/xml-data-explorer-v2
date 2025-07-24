@@ -70,7 +70,7 @@ export class DataViewPanel {
                         this.saveAll();
                         return;
                     case 'navigateToElement':
-                        this.navigateToElement(message.xpath);
+                        this.navigateToElement(JSON.stringify(JSON.parse(message.allData)[message.idx]));
                         return;
                     case 'refreshTable':
                         this.refreshTable();
@@ -94,10 +94,10 @@ export class DataViewPanel {
         const flattenedData = this.flattenElementData(element);
         
         // Debug: Log the flattened data being used in HTML
-        console.log('Flattened data for HTML:');
-        flattenedData.forEach(row => {
-            console.log(`  HTML row: ${row.xpath} = "${row.data}"`);
-        });
+        // console.log('Flattened data for HTML:');
+        // flattenedData.forEach(row => {
+        //     console.log(`  HTML row: ${row.xpath} = "${row.data}"`);
+        // });
         
         return `<!DOCTYPE html>
 <html lang="en">
@@ -265,18 +265,19 @@ export class DataViewPanel {
         }
         
         // Add click handlers for table rows to navigate to XML (but not on input fields)
-        document.querySelectorAll('tbody tr').forEach(row => {
+        document.querySelectorAll('tbody tr').forEach((row, idx) => {
             row.addEventListener('click', function(event) {
                 // Don't trigger navigation if clicking on input fields or buttons
                 if (event.target.tagName === 'INPUT' || event.target.tagName === 'BUTTON') {
                     return;
                 }
                 
-                const xpath = this.getAttribute('data-xpath');
-                console.log('Navigation clicked with XPath:', xpath);
+                // const xpath = this.getAttribute('data-xpath');
+                // console.log('Navigation clicked with XPath:', xpath);
                 vscode.postMessage({
                     command: 'navigateToElement',
-                    xpath: xpath
+                    allData: '${JSON.stringify(flattenedData)}',
+                    idx: idx.toString()
                 });
             });
         });
@@ -445,9 +446,10 @@ export class DataViewPanel {
         }
     }
 
-    private async navigateToElement(xpath: string) {
+    private async navigateToElement(selectedRowString: string) {
+        const selectedRow = JSON.parse(selectedRowString);
         try {
-            vscode.window.showInformationMessage(`Navigating to: ${xpath}`);
+            vscode.window.showInformationMessage(`Navigating to: ${selectedRow.data}`);
             
             // Find the element in the XML document
             const fs = require('fs');
@@ -456,8 +458,66 @@ export class DataViewPanel {
             const xmlContent = fs.readFileSync(this._currentElement!.filePath, 'utf8');
             const parser = new DOMParser();
             const doc = parser.parseFromString(xmlContent, 'text/xml');
+
+            const matchingTags = doc.getElementsByTagName(selectedRow.path.replace(/([a-z]*\/)/g, ''));
             
-            const element = this.findElementByXPath(doc, xpath);
+            let matchKey: string = Object.keys(matchingTags).find(matKey => 
+                matchingTags[matKey].lastChild?.data === selectedRow.data || false
+            );
+            
+            if(matchKey){
+
+                // Open the XML file
+                const document = await vscode.workspace.openTextDocument(this._currentElement!.filePath);
+                const editor = await vscode.window.showTextDocument(document, vscode.ViewColumn.Two);
+
+                const range = new vscode.Range(
+                    new vscode.Position(matchingTags[matchKey].lastChild.lineNumber - 1,
+                        matchingTags[matchKey].lastChild.columnNumber - 1),
+                    new vscode.Position(matchingTags[matchKey].lastChild.lineNumber - 1,
+                        matchingTags[matchKey].lastChild.columnNumber + matchingTags[matchKey].lastChild.length - 1)
+                );
+
+                // Highlight the element
+                editor.selection = new vscode.Selection(range.start, range.end);
+
+                vscode.window.withProgress(
+                    {
+                        location: vscode.ProgressLocation.Notification,
+                        title: `JB no le sabe 😜 😒`,
+                        cancellable: false
+                    },
+                    async (progress, token) => {
+                        setTimeout(() => {
+                            progress.report({ increment: 20, message: 'Apestas' })
+                        }, 1000);
+
+                        setTimeout(() => {
+                            progress.report({ increment: 40, message: 'Ya no uses tanta IA' })
+                        }, 2000);
+
+                        setTimeout(() => {
+                            progress.report({ increment: 60, message: 'Te voy a acusar con Mantilla' })
+                        }, 4000);
+
+                        const p = new Promise<void>(res => {
+                            setTimeout(() => {
+                                res()
+                            }, 8000);
+                        })
+
+                        return p
+                    }
+                );
+                
+            }
+
+            // for(let i = 0; i < matchingTags.length; i++){
+            //     console.log(doc.getElementsByTagName('title').find((matchTags: any) => matchTags.childNodes[0].data === selectedRow.data));
+            // }
+            
+            return;
+            const element = this.findElementByXPath(doc, selectedRow);
             if (element) {
                 console.log(`Found element for navigation: ${element.tagName}, text: "${element.textContent}"`);
                 
@@ -505,7 +565,7 @@ export class DataViewPanel {
                     console.log('Could not find element text in XML content');
                 }
             } else {
-                console.log(`Element not found for XPath: ${xpath}`);
+                console.log(`Element not found for XPath: ${selectedRow}`);
             }
         } catch (error) {
             console.error('Error navigating to element:', error);
